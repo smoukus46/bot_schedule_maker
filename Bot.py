@@ -15,7 +15,7 @@ token = "6773724804:AAFgufpFjuSRJyspNu_ONmk3qST_wiXO3D4"
 
 bot = telebot.TeleBot(token)
 
-file_path = os.path.abspath('/root/Bot/Raspisanie_trenirovok_2024.xlsx')
+file_path = os.path.abspath('C:/Users/Kikita/OneDrive/Документы/bot_schedule_maker/Расписание_тренировок.xlsx')
 
 excel_send_package = []
 
@@ -194,15 +194,30 @@ def inline_back_end_keyboard():
 # Отправка первого сообщения и создание первой клавиатуры
 @bot.message_handler(commands=['start'])
 def start_message(message):
-    stic = ['sticker.webp', 'sticker1.webp', 'sticker2.webp']
-    send_stic = open('/root/Bot/' + random.choice(stic), 'rb')
+    stic = ['sticker.webm', 'sticker1.webm', 'sticker2.webm']
+    send_stic = open('C:/Users/Kikita/OneDrive/Документы/bot_schedule_maker/' + random.choice(stic), 'rb')
 
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     item1 = types.KeyboardButton("Ага...(((")
-    markup.add(item1)	
+    item2 = types.KeyboardButton("Пока нет))) Просто выгрузи мне файл с расписанием")
+    markup.add(item1)
+    markup.add(item2)
     
     bot.send_message(message.chat.id, "Привет, Валерка, снова пора делать расписание?", reply_markup=markup)
     bot.send_sticker(message.chat.id, send_stic)
+
+
+# Скачивание файла расписания
+@bot.message_handler(func=lambda message: True)
+def download_schedule(message):
+    doc = open(file_path, 'rb')
+
+    if message.chat.type == 'private':
+        if message.text == "Пока нет))) Просто выгрузи мне файл с расписанием":
+            bot.send_message(message.chat.id, 'Вот твое расписание')
+            bot.send_document(message.chat.id, doc)
+        else:
+            bot.send_message(message.chat.id, "Я не знаю что и ответить")
 
 
 # Создание клавиатуры со списком залов
@@ -212,7 +227,7 @@ def get_gym(message):
         if message.text == "Ага...(((":
             bot.send_message(message.chat.id, 'Выбери пыточную', reply_markup=inline_gym())
         elif message.text == "Жека струковое поле":
-            send_egg_stic = open('/root/Bot/stickereasteregg.webp', 'rb')
+            send_egg_stic = open('C:/Users/Kikita/OneDrive/Документы/bot_schedule_maker/stickereasteregg.webm', 'rb')
             bot.send_sticker(message.chat.id, send_egg_stic)
         else:
             bot.send_message(message.chat.id, "Я не знаю что и ответить")
